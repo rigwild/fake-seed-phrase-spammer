@@ -5,6 +5,7 @@
     "start": "node index.js"
   },
   "dependencies": {
+    "bip39": "^3.0.4",
     "node-fetch": "^3.2.3",
     "threads": "^1.7.0"
   }

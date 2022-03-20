@@ -1,32 +1,31 @@
 import { spawn, Pool, Worker } from 'threads'
-import { bip39Words } from './bip39Words.js'
+import bip39 from 'bip39'
+import { toSpamHostnames } from './toSpam.js'
 
 const getPool = () => Pool(() => spawn(new Worker('./worker')), { size: 12, concurrency: 10 })
-const pickRandom = arr => arr[Math.floor(Math.random() * arr.length)]
-const getRandomSeedPhrase = (length = 12) => Array.from({ length }, (_, i) => pickRandom(bip39Words)).join(' ')
 
 let pool = getPool()
 
 ;(async () => {
-  let count = 1
-  const countHostname = new Map()
+  console.log(`Start spamming ${toSpamHostnames.length} scams`)
+  console.log(toSpamHostnames)
 
-  let tasks = []
+  let globalCount = 1
+  const hostnameCount = new Map()
+
   let locked = false
 
   setInterval(() => {
     if (locked) return
 
-    const task = pool.queue(async ({ doRequest }) => {
-      const seedPhrase = getRandomSeedPhrase()
-      const res = await doRequest(seedPhrase)
-      const hostname = new URL(res.url).hostname
-      const hostCount = countHostname.get(hostname) || 0
-      console.log(`[${count} | ${hostCount}] ${res.status} ${res.statusText} - ${hostname} - "${seedPhrase}"`)
-      countHostname.set(hostname, hostCount + 1)
-      count++
+    pool.queue(async ({ doRequest }) => {
+      const seedPhrase = bip39.generateMnemonic()
+      const { status, statusText, hostname } = await doRequest(seedPhrase)
+      const hostCount = hostnameCount.get(hostname) || 0
+      console.log(`[${globalCount} | ${hostCount}] ${hostname} - ${status} ${statusText} - "${seedPhrase}"`)
+      hostnameCount.set(hostname, hostCount + 1)
+      globalCount++
     })
-    tasks.push(task)
   }, 5)
 
   setInterval(async () => {

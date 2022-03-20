@@ -8,7 +8,11 @@ expose({
   async doRequest(seedPhrase) {
     const picked = pickRandom(toSpam)
     const res = await picked(seedPhrase)
-    const { status, statusText, url } = res
-    return { status, statusText, url }
+    const hostname = new URL(res.url).hostname
+    return {
+      status: res.status,
+      statusText: res.statusText,
+      hostname
+    }
   }
 })
