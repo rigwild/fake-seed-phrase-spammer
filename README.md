@@ -2,13 +2,13 @@
 
 a smoll but very fast script to fuck scammers by sending tons of fake seed phrases 💥
 
-uses dank worker threads for speedz
+uses dank worker threads for speedz and supports spamming multiple targets at once
 
 ![gotta go fast](./fast.png)
 
-## Screenshot
+## Demo
 
-![screenshot](./screenshot.png)
+![demo](./demo.gif)
 
 ## Install
 
@@ -18,7 +18,7 @@ pnpm i
 
 ## Configure
 
-1. Open devtools network
+1. Open devtools network tab
 2. Send fake seed phrase request to shitty scummy scam website
 3. Copy request as fetch
 4. Add as a function to the [`toSpam.js`](./toSpam.js) array, do not forget to replace seed phrase
